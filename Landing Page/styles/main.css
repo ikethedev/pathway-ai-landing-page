@@ -1,5 +1,63 @@
-/* NAVBAR STYLES*/
+/* UTILS */
+.container {
+    max-width: 64rem;
+    padding: 0 1.25rem;
+}
+/* NAVBAR STYLES */
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .nav_logo{
     width: 4rem;
     height: 4rem;
 }
+
+/* Mobile Menu */
+
+.hamburger {
+    position: relative;
+    width: 2rem;
+    height: 1.5rem;
+    cursor: pointer;
+}
+
+.hamburger__line {
+    position: absolute;
+    width: 100%;
+    height: 0.125rem;
+    background-color: black;
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    left: 0;
+}
+
+/* Position each line */
+.hamburger__line:nth-child(1) {
+    top: 0;
+}
+
+.hamburger__line:nth-child(2) {
+    top: 0.625rem;
+}
+
+.hamburger__line:nth-child(3) {
+    top: 1.25rem;
+}
+
+/* OPEN STATE */
+
+.hamburger.open .hamburger__line:nth-child(1) {
+    transform: rotate(45deg) translateY(0.825rem);
+}
+
+.hamburger.open .hamburger__line:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.open .hamburger__line:nth-child(3) {
+    transform: rotate(-45deg) translateY(-0.825rem);
+}
+
+
