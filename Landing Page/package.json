@@ -1,0 +1,29 @@
+{
+    "name": "pathway-ai-landing",
+    "version": "1.0.0",
+    "description": "Landing page for PathWay AI",
+    "main": "dist/main.js",
+    "scripts": {
+        "build": "tsc",
+        "watch": "tsc --watch",
+        "dev": "tsc --watch",
+        "start": "live-server .",
+        "build:prod": "tsc && npm run minify",
+        "minify": "terser dist/main.js -o dist/main.min.js"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "live-server": "^1.2.0",
+        "nodemon": "^3.1.10",
+        "terser": "^5.19.0",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.0.0"
+    },
+    "keywords": [
+        "ai",
+        "landing-page",
+        "typescript"
+    ],
+    "author": "Your Name",
+    "license": "MIT"
+}
