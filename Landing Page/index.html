@@ -11,15 +11,47 @@
     <script src="dist/main.js" defer></script>
 </head>
 <body>
-    <nav class="container">
-        <img src="assets/logo.svg" alt="no image found" class="nav_logo">
-        <!-- Mobile Menu -->
-        <div id="hamburger" class="hamburger">
-            <div class="hamburger__line"></div>
-            <div class="hamburger__line"></div>
-            <div class="hamburger__line"></div>
-        </div>
-    </nav>
+    <div class="hero_container">
+        <header>
+            <nav class="container">
+                <img src="assets/icons/logo.svg" alt="no image found" class="nav_logo">
+                <!-- Menu Options -->
+                <ul id="list" class="list">
+                    <li class="list_item">Problem</li>
+                    <li class="list_item">How it Works</li>
+                    <li class="list_item">
+                        <button class="cta_btn">Join the waitlist</button>
+                    </li>
+                   
+                </ul>
+                <!-- Mobile Menu -->
+                <div id="hamburger" class="hamburger">
+                    <div class="hamburger__line"></div>
+                    <div class="hamburger__line"></div>
+                    <div class="hamburger__line"></div>
+                </div>
+            </nav>
+        </header>
+        <!-- Hero Content-->
+        <section class="hero container">
+            <div class="hero_status">
+                <span class="hero_status-text">
+                    Stay Tuned
+                </span>
+            </div>
+            <h1 class="hero_title">
+                Built by <span class="teacher-highlight">Teachers</span>
+                <br>
+                Made for <span class="student-highlight">Students</span>
+            </h1>
+            <p class="hero_text">
+                Close learning gaps with AI insight-driven tools that support your teaching, not replace it.
+            </p>
+            <button class="hero_button cta_btn">
+                Join the waitlist
+            </button>
+        </section>
+    </div>
     
 </body>
 </html>
