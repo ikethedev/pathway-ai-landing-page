@@ -208,9 +208,6 @@ nav {
 
 /* HERO SECTION */
 .hero_container {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     background-image: url('../assets/background/mobile/mobile-blob-1.svg'), url('../assets/background/mobile/mobile-blob-2.svg'), url('../assets/background/mobile/mobile-blob-3.svg');
     background-position: top left,  calc(100% - 20px) calc(100% - 80px), bottom left;
