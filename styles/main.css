@@ -534,23 +534,24 @@ nav {
 }
 
 .founder__header {
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 700;
   margin-bottom: 2rem;
+  line-height: 150%;
 }
 
 @media screen and (width > 48rem) {
   .founder__header {
     font-size: 3rem;
-    line-height: 150%;
-  
   }
   
 }
 
 .founder__text {
-  line-height: 150%;
-  width: 80%;
+    line-height: 150%;
+    width: 80%;
+    opacity: 0.5;
+    font-size: 1.25rem;
 }
 
 @media screen and (width > 48rem) {
