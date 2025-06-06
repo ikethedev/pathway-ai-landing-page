@@ -4,7 +4,7 @@
 /* UTILS */
 :root {
   --white: #ffffff;
-  --primary-btn: #805ad5;
+  --primary-accent: #805ad5;
   --primary-font: "Plus Jakarta Sans", sans-serif;
   --glass-background: rgba(255, 255, 255, 0.53);
   --accent-color-1: #5aa4f8;
@@ -21,15 +21,15 @@
 }
 
 .cta_btn {
-  background-color: var(--primary-btn);
+  font-size: 1rem;
+  background-color: var(--primary-accent);
   border: none;
-  padding: 0.5rem 1.5rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   color: var(--white);
   letter-spacing: 1px;
   line-height: 150%;
   box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
-
   position: relative;
   z-index: 1;
   transition: color 0.3s ease;
@@ -43,13 +43,13 @@
   right: -1px;
   bottom: -1px;
   border-radius: 0.5rem;
-  background: linear-gradient(90deg, var(--primary-btn), var(--primary-btn)) top /
+  background: linear-gradient(90deg, var(--primary-accent), var(--primary-accent)) top /
       0% 1px no-repeat,
-    linear-gradient(180deg, var(--primary-btn), var(--primary-btn)) right / 1px
+    linear-gradient(180deg, var(--primary-accent), var(--primary-accent)) right / 1px
       0% no-repeat,
-    linear-gradient(270deg, var(--primary-btn), var(--primary-btn)) bottom / 0%
+    linear-gradient(270deg, var(--primary-accent), var(--primary-accent)) bottom / 0%
       1px no-repeat,
-    linear-gradient(0deg, var(--primary-btn), var(--primary-btn)) left / 1px 0%
+    linear-gradient(0deg, var(--primary-accent), var(--primary-accent)) left / 1px 0%
       no-repeat;
 
   transition: background-size 0.8s ease-in-out;
@@ -72,7 +72,7 @@
 
 .cta_btn:hover {
   cursor: pointer;
-  color: var(--primary-btn); /* Text color matches border color */
+  color: var(--primary-accent); /* Text color matches border color */
 }
 
 .cta_btn:hover::before {
@@ -354,6 +354,7 @@ nav {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  padding: 0 1rem;
 }
 
 @media screen and (width > 48rem) {
@@ -414,10 +415,10 @@ nav {
   background-position:
       calc(108% + 49px) 44%,
       -89px center,
-      96% calc(100% + 30px),
+      96% calc(95% + 30px),
       -118% 4px;
   background-repeat: no-repeat;
-  padding-bottom: 10%;
+  padding-bottom: 0 1rem 10%;
 }
 
 @media screen and (width > 48rem) {
@@ -560,6 +561,62 @@ nav {
     opacity: 50%;
   }
 }
+
+
+/* Footer Styling */
+
+@media screen and (width > 48rem) {
+  .footer_container {
+    background-image: url('/assets/background/desktop/footer-blob-1.svg'), url('/assets/background/desktop/footer-blob-2.svg');
+    background-repeat: no-repeat;
+    background-position: 0% 50%, 30% 20%;
+    padding: 1rem;
+  }
+}
+
+.footer_section {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+@media screen and (width > 48rem){
+  .footer_section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+}
+.footer_header {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 150%;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+@media screen and (width > 48rem){
+  .footer_header{
+    font-size: 3rem;
+    line-height: 150%;
+    width: 50%;
+    text-align: center;
+  }
+}
+
+.footer_highlight {
+  color: var(--primary-accent);
+}
+
+.footer_text {
+  line-height: 150%;
+  opacity: 50%;
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
 
 
 /* If you need to prevent horizontal page scroll */
