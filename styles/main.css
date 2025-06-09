@@ -298,7 +298,7 @@ nav {
 
 @media screen and (width > 48rem) {
   .hero_title {
-    font-size: 2.5rem;
+    font-size: 3.5rem;
   }
 }
 
@@ -323,8 +323,9 @@ nav {
 
 @media screen and (width > 48rem) {
   .hero_text {
-    width: 65%;
-    max-width: 23rem;
+    font-size: 1.75rem;
+    width: 100%;
+    max-width: 40rem;
   }
 }
 
@@ -376,7 +377,7 @@ nav {
 }
 
 .why-section__header {
-  font-size: 1.25rem;
+  font-size: 1.75rem;
   font-weight: 700;
   width: 70%;
   line-height: 150%;
@@ -384,7 +385,7 @@ nav {
 
 @media screen and (width > 48rem) {
   .why-section__header {
-    font-size: 2rem;
+    font-size: 3rem;
     margin: 0 auto;
   }
 }
@@ -490,7 +491,7 @@ nav {
 
 @media screen and (width > 48rem) {
   .works-section__header {
-    font-size: 2rem;
+    font-size: 3rem;
     margin-bottom: 2rem;
   }
 }
@@ -547,7 +548,7 @@ nav {
 }
 
 .founder__header {
-  font-size: 2rem;
+  font-size: 3rem;
   font-weight: 700;
   margin-bottom: 2rem;
   line-height: 150%;
