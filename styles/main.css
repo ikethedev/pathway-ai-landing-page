@@ -31,8 +31,11 @@
   line-height: 150%;
   box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
   position: relative;
-  z-index: 1;
+  z-index: 10; /* Increased z-index to ensure it's on top */
   transition: color 0.3s ease;
+  cursor: pointer; /* Ensure cursor shows it's clickable */
+  /* Ensure the button itself can receive clicks */
+  pointer-events: auto;
 }
 
 .cta_btn::before {
@@ -53,7 +56,8 @@
       no-repeat;
 
   transition: background-size 0.8s ease-in-out;
-  z-index: -1;
+  z-index: -1; /* Keep behind the button */
+  pointer-events: none; /* Ensure pseudo-element doesn't block clicks */
 }
 
 .cta_btn::after {
@@ -67,7 +71,8 @@
   border-radius: 0.5rem;
   transform: scale(0);
   transition: transform 0.3s ease-in-out 0.5s;
-  z-index: -1;
+  z-index: -1; /* Keep behind the button */
+  pointer-events: none; /* Ensure pseudo-element doesn't block clicks */
 }
 
 .cta_btn:hover {
@@ -84,6 +89,13 @@
 
 .cta_btn:hover::after {
   transform: scale(1);
+}
+
+/* Special override for submit button to ensure it's always clickable */
+#subscribe-btn {
+  z-index: 1010 !important;
+  pointer-events: auto !important;
+  position: relative !important;
 }
 
 body {
@@ -625,4 +637,162 @@ body {
   overflow-y: visible; /* Allow vertical blob overflow */
 }
 
+/* Updated modal positioning - replace the existing modal styles in your CSS */
 
+.subscribe-container {
+  position: fixed; /* Changed from absolute to fixed */
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  z-index: 2000; /* Increased z-index significantly */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.subscribe-container:not(.hidden) {
+  opacity: 1;
+  visibility: visible;
+}
+
+.overlay {
+  position: fixed; /* Changed from absolute to fixed */
+  height: 100vh;
+  width: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1900; /* Lower than form container */
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  transition: background-color 0.3s ease;
+}
+
+@media screen and (width > 48rem) {
+  .overlay {
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+  }
+}
+
+.form-container {
+  background-color: var(--white);
+  position: relative;
+  z-index: 2010; /* Higher than everything else */
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+@media screen and (width > 48rem) {
+  .form-container {
+    max-width: 500px;
+    padding: 2.5rem;
+    gap: 2rem;
+    border-radius: 1rem;
+  }
+}
+
+.subscribe-form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--white);
+  z-index: 2020; /* Ensure form is on top */
+  gap: 1.5rem;
+}
+
+@media screen and (width > 48rem) {
+  .subscribe-form {
+    gap: 2rem;
+  }
+}
+
+/* Response message styling */
+.response-message {
+  text-align: center;
+  font-weight: 500;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  margin: 0;
+}
+
+.response-message.success {
+  color: #065f46;
+  background-color: #d1fae5;
+  border: 1px solid #a7f3d0;
+}
+
+.response-message.error {
+  color: #991b1b;
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+}
+
+@media screen and (width > 48rem) {
+  .response-message {
+    font-size: 1.125rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+  }
+}
+
+.subscribe-input {
+  padding: 0.75rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  z-index: 2030;
+  position: relative;
+}
+
+.subscribe-input:focus {
+  outline: none;
+  border-color: var(--primary-accent);
+  box-shadow: 0 0 0 3px rgba(128, 90, 213, 0.1);
+}
+
+@media screen and (width > 48rem) {
+  .subscribe-input {
+    padding: 1rem 1.25rem;
+    font-size: 1.125rem;
+    border-radius: 0.5rem;
+  }
+}
+
+.subscribe-header {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  text-align: center;
+  color: var(--primary-accent);
+  line-height: 1.2;
+}
+
+@media screen and (width > 48rem) {
+  .subscribe-header {
+    font-size: 2.5rem;
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+  overflow: hidden;
+}

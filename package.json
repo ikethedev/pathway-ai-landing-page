@@ -6,18 +6,19 @@
     "scripts": {
         "build": "tsc",
         "watch": "tsc --watch",
-        "dev": "tsc --watch",
-        "start": "live-server .",
+        "dev": "tsc && node dist/server.js",
+        "start": "node dist/server.js",
         "build:prod": "tsc && npm run minify",
         "minify": "terser dist/main.js -o dist/main.min.js"
     },
     "devDependencies": {
-        "@types/node": "^20.0.0",
+        "@types/express": "^5.0.3",
+        "@types/node": "^20.19.0",
         "live-server": "^1.2.0",
         "nodemon": "^3.1.10",
         "terser": "^5.19.0",
         "ts-node": "^10.9.2",
-        "typescript": "^5.0.0"
+        "typescript": "^5.8.3"
     },
     "keywords": [
         "ai",
@@ -25,5 +26,12 @@
         "typescript"
     ],
     "author": "Your Name",
-    "license": "MIT"
+    "license": "MIT",
+    "dependencies": {
+        "@mailchimp/mailchimp_marketing": "^3.0.80",
+        "axios": "^1.9.0",
+        "concurrently": "^9.1.2",
+        "dotenv": "^16.5.0",
+        "express": "^4.21.2"
+    }
 }
