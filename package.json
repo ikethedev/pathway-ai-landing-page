@@ -18,7 +18,8 @@
         "nodemon": "^3.1.10",
         "terser": "^5.19.0",
         "ts-node": "^10.9.2",
-        "typescript": "^5.8.3"
+        "typescript": "^5.8.3",
+        "vite": "^6.3.5"
     },
     "keywords": [
         "ai",
@@ -33,5 +34,13 @@
         "concurrently": "^9.1.2",
         "dotenv": "^16.5.0",
         "express": "^4.21.2"
-    }
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ikethedev/pathway-ai-landing-page.git"
+    },
+    "bugs": {
+        "url": "https://github.com/ikethedev/pathway-ai-landing-page/issues"
+    },
+    "homepage": "https://github.com/ikethedev/pathway-ai-landing-page#readme"
 }
