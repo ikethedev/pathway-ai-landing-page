@@ -15,83 +15,54 @@
 }
 
 .container {
-  max-width: 64rem;
+  max-width: 84rem;
   padding: 0 1.25rem;
   margin: 0 auto;
 }
 
 .cta_btn {
   font-size: 1rem;
-  background-color: var(--primary-accent);
+  background: linear-gradient(135deg, var(--primary-accent), #9f7aea);
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   color: var(--white);
   letter-spacing: 1px;
   line-height: 150%;
-  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 4px 20px rgba(128, 90, 213, 0.3);
   position: relative;
-  z-index: 10; /* Increased z-index to ensure it's on top */
-  transition: color 0.3s ease;
-  cursor: pointer; /* Ensure cursor shows it's clickable */
-  /* Ensure the button itself can receive clicks */
+  z-index: 10;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
   pointer-events: auto;
+  overflow: hidden;
 }
 
 .cta_btn::before {
   content: "";
   position: absolute;
-  top: -1px;
-  left: -1px;
-  right: -1px;
-  bottom: -1px;
-  border-radius: 0.5rem;
-  background: linear-gradient(90deg, var(--primary-accent), var(--primary-accent)) top /
-      0% 1px no-repeat,
-    linear-gradient(180deg, var(--primary-accent), var(--primary-accent)) right / 1px
-      0% no-repeat,
-    linear-gradient(270deg, var(--primary-accent), var(--primary-accent)) bottom / 0%
-      1px no-repeat,
-    linear-gradient(0deg, var(--primary-accent), var(--primary-accent)) left / 1px 0%
-      no-repeat;
-
-  transition: background-size 0.8s ease-in-out;
-  z-index: -1; /* Keep behind the button */
-  pointer-events: none; /* Ensure pseudo-element doesn't block clicks */
-}
-
-.cta_btn::after {
-  content: "";
-  position: absolute;
   top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--white);
-  border-radius: 0.5rem;
-  transform: scale(0);
-  transition: transform 0.3s ease-in-out 0.5s;
-  z-index: -1; /* Keep behind the button */
-  pointer-events: none; /* Ensure pseudo-element doesn't block clicks */
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.6s ease;
 }
 
 .cta_btn:hover {
-  cursor: pointer;
-  color: var(--primary-accent); /* Text color matches border color */
+  transform: translateY(-2px);
+  box-shadow: 0px 8px 25px rgba(128, 90, 213, 0.4);
+  background: linear-gradient(135deg, #9f7aea, var(--primary-accent));
 }
 
 .cta_btn:hover::before {
-  background-size: 100% 10px, /* Top */ 10px 100%, /* Right */ 100% 10px,
-    /* Bottom */ 10px 100%; /* Left */
-
-  transition-delay: 0s, 0.2s, 0.4s, 0.6s;
+  left: 100%;
 }
 
-.cta_btn:hover::after {
-  transform: scale(1);
+.cta_btn:active {
+  transform: translateY(0);
 }
 
-/* Special override for submit button to ensure it's always clickable */
 #subscribe-btn {
   z-index: 1010 !important;
   pointer-events: auto !important;
@@ -102,11 +73,26 @@ body {
   font-family: var(--primary-font);
 }
 
-/* NAVBAR STYLES */
+.navbar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: var(--white);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1rem 0;
+}
+
+/* NAVBAR STYLES - Updated */
 nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  max-width: 84rem; /* Same as your container max-width */
+  margin: 0 auto;
+  padding: 0 1.25rem; /* Same as your container padding */
 }
 
 .nav_logo {
@@ -114,7 +100,22 @@ nav {
   height: 4rem;
 }
 
-/* Menu items */
+/* Add top padding to body to account for fixed navbar */
+body {
+  font-family: var(--primary-font);
+  padding-top: 6rem; /* Adjust this value based on your navbar height */
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+
+/* Add scroll offset for sections to prevent navbar overlap */
+.why-section--problem,
+.works-section__header,
+.founder__header {
+  scroll-margin-top: 120px; /* Adjust based on your navbar height + some padding */
+}
+
+/* Menu items - Updated for fixed positioning */
 .list {
   position: fixed;
   display: flex;
@@ -127,10 +128,10 @@ nav {
   transition: all 0.3s ease-in-out;
   box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
   flex-direction: column;
-  padding-top: 6rem;
+  padding-top: 8rem; /* Increased to account for fixed navbar */
   padding-right: 1rem;
   gap: 1.5rem;
-  z-index: 1000;
+  z-index: 1100; /* Higher than navbar */
 }
 
 @media screen and (width > 48rem) {
@@ -145,6 +146,7 @@ nav {
     align-items: center;
     transform: translateX(0%);
     background-color: transparent;
+    z-index: auto;
   }
 }
 
@@ -154,6 +156,13 @@ nav {
 
 .list_item {
   margin-left: 2rem;
+}
+
+.list_item:not(:last-child):hover {
+  opacity: 0.5;
+  cursor: pointer;
+  border-bottom: .05rem solid var(--primary-accent);
+  padding-bottom: .25rem;
 }
 
 @media screen and (width > 48rem) {
@@ -166,14 +175,13 @@ nav {
   opacity: 100%;
 }
 
-/* Mobile Menu */
-
+/* Mobile Menu - Updated z-index */
 .hamburger {
   position: relative;
   width: 2rem;
   height: 1.5rem;
   cursor: pointer;
-  z-index: 100000;
+  z-index: 1200; /* Higher than mobile menu */
 }
 
 @media screen and (width > 48rem) {
@@ -186,36 +194,29 @@ nav {
   position: absolute;
   width: 100%;
   height: 0.125rem;
-  background-color: black;
-  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+  background: linear-gradient(90deg, #333, #666);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   left: 0;
+  border-radius: 2px;
 }
 
-/* Position each line */
-.hamburger__line:nth-child(1) {
-  top: 0;
-}
-
-.hamburger__line:nth-child(2) {
-  top: 0.625rem;
-}
-
-.hamburger__line:nth-child(3) {
-  top: 1.25rem;
-}
-
-/* OPEN STATE */
+.hamburger__line:nth-child(1) { top: 0; }
+.hamburger__line:nth-child(2) { top: 0.625rem; }
+.hamburger__line:nth-child(3) { top: 1.25rem; }
 
 .hamburger.open .hamburger__line:nth-child(1) {
   transform: rotate(45deg) translateY(0.825rem);
+  background: var(--primary-accent);
 }
 
 .hamburger.open .hamburger__line:nth-child(2) {
   opacity: 0;
+  transform: translateX(20px);
 }
 
 .hamburger.open .hamburger__line:nth-child(3) {
   transform: rotate(-45deg) translateY(-0.825rem);
+  background: var(--primary-accent);
 }
 
 /* HERO SECTION */
@@ -282,11 +283,21 @@ nav {
 }
 
 .hero_status {
-  background-color: var(--white);
-  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, var(--white), #f8fafc);
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
   width: fit-content;
   padding: 0.5rem 1.5rem;
-  border-radius: 0.5rem;
+  border-radius: 2rem;
+  animation: bounce 2s ease-in-out infinite;
+  border: 1px solid rgba(128, 90, 213, 0.2);
+}
+
+.hero_status-text {
+  background: linear-gradient(135deg, var(--primary-accent), var(--accent-color-1));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
 }
 
 .hero_title {
@@ -414,6 +425,12 @@ nav {
   }
 }
 
+.gradient_highlight {
+  background: linear-gradient(90deg, #7A5FFF, #6FB1FC);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 /* works sections */
 
 .works_container {
@@ -496,27 +513,56 @@ nav {
 }
 
 /* Card styles */
+/* Enhance card appearance in How It Works section */
 .card {
   border-radius: 1.5rem;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 4px 4px 11px rgba(0, 0, 0, 0.25);
-  padding: 1.5rem 1rem 4.5rem;
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 2rem 1.5rem;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(8px);
 }
 
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Add circular step icons */
+.card::before {
+  content: attr(data-step);
+  position: absolute;
+  top: -1rem;
+  left: -1rem;
+  background-color: var(--accent-color-1);
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Make text cleaner */
 .card-title {
-  font-weight: 700;
   font-size: 1.5rem;
+  font-weight: 700;
   margin-bottom: 1rem;
-  opacity: 75%;
+  color: #1a1a1a;
 }
 
 .card-text {
-  opacity: 50%;
-  line-height: 150%;
-  width: 80%;
-  padding-bottom: 1rem;
+  font-size: 1rem;
+  opacity: 0.7;
+  line-height: 1.6;
 }
+
 
 
 
@@ -587,8 +633,13 @@ nav {
 }
 
 .footer_section {
-  padding-top: 4rem;
-  padding-bottom: 4rem;
+  padding: 4rem 1.5rem;
+  text-align: center;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
 }
 
 @media screen and (width > 48rem){
@@ -602,18 +653,16 @@ nav {
 
 }
 .footer_header {
-  font-size: 2.5rem;
-  font-weight: 700;
-  line-height: 150%;
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
 @media screen and (width > 48rem){
   .footer_header{
     font-size: 3rem;
     line-height: 150%;
-    width: 50%;
+    width: 70%;
     text-align: center;
   }
 }
@@ -795,4 +844,50 @@ body {
 /* Prevent body scroll when modal is open */
 body.modal-open {
   overflow: hidden;
+}
+
+.inline-email-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.inline-email-input {
+  padding: 0.75rem 1.25rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  width: 100%;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.inline-email-input:focus {
+  outline: none;
+  border-color: var(--primary-accent);
+  box-shadow: 0 0 0 3px rgba(128, 90, 213, 0.15);
+}
+
+@media screen and (width > 48rem) {
+  .inline-email-form {
+    flex-direction: row;
+  }
+
+  .inline-email-input {
+    flex: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+  }
+  40% {
+      transform: translateY(-5px);
+  }
+  60% {
+      transform: translateY(-3px);
+  }
 }

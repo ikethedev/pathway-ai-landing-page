@@ -7,6 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const subscribeModal = document.querySelector("#subscribe-container")
     const overlay = document.querySelector(".overlay")
     
+    // Footer form elements
+    const footerForm = document.querySelector("#email-waitlist-form");
+    const footerEmailInput = document.querySelector(".inline-email-input") as HTMLInputElement | null;
+    
     const toggleMenu = () => {
         menuList?.classList.toggle("open");
         hamburgerMenu?.classList.toggle("open");
@@ -52,12 +56,102 @@ document.addEventListener('DOMContentLoaded', () => {
         if (message) message.textContent = "";
     };
     
-    // Form submission handler
+    // API submission function (shared between modal and footer forms)  
+    const submitEmailToAPI = async (email: string, messageElement: HTMLElement | null = null, isFooterForm: boolean = false) => {
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            if (messageElement) {
+                messageElement.textContent = "Please enter a valid email address";
+                messageElement.style.color = "#ef4444";
+            } else if (isFooterForm) {
+                showFooterMessage("Please enter a valid email address", 'error');
+            }
+            return false;
+        }
+
+        // Show loading state
+        if (messageElement) {
+            messageElement.textContent = "Subscribing...";
+            messageElement.style.color = "#666";
+        } else if (isFooterForm) {
+            showFooterMessage("Adding you to our waitlist...", 'loading');
+        }
+
+        try {
+            console.log("Making request to:", "https://pathway-ai-landing-page.onrender.com");
+            
+            const response = await fetch("https://pathway-ai-landing-page.onrender.com/api/subscribe", {
+                method: "POST", 
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email }),
+                mode: 'cors',
+                credentials: 'include'
+            });
+
+            console.log("Response status:", response.status);
+            const data = await response.json();
+            console.log("Response data:", data);
+
+            if (response.ok) {
+                if (messageElement) {
+                    messageElement.textContent = data.message || "Successfully subscribed!";
+                    messageElement.style.color = "#22c55e"; // Success green
+                } else if (isFooterForm) {
+                    showFooterMessage("🎉 Welcome to the waitlist! You'll be the first to know when Pathway AI launches.", 'success');
+                }
+                return true;
+            } else {
+                if (messageElement) {
+                    // Handle "already subscribed" case differently
+                    if (response.status === 409 && data.alreadySubscribed) {
+                        messageElement.textContent = data.message || "This email is already subscribed!";
+                        messageElement.style.color = "#f59e0b"; // Warning orange
+                    } else {
+                        messageElement.textContent = data.message || "Subscription failed.";
+                        messageElement.style.color = "#ef4444"; // Error red
+                    }
+                } else if (isFooterForm) {
+                    if (response.status === 409 && data.alreadySubscribed) {
+                        showFooterMessage("You're already on our waitlist! We'll be in touch soon.", 'success');
+                        return true; // Treat as success for footer form
+                    } else {
+                        showFooterMessage(data.message || "Subscription failed. Please try again.", 'error');
+                    }
+                }
+                return response.status === 409 && data.alreadySubscribed;
+            }
+        } catch (error) {
+            console.error("Fetch error:", error);
+            
+            let errorMessage = "Something went wrong. Please try again.";
+            
+            if (error instanceof TypeError) {
+                if (error.message.includes('Failed to fetch')) {
+                    errorMessage = "Network error. Please check your connection.";
+                } else if (error.message.includes('CORS')) {
+                    errorMessage = "Connection issue. Please try again.";
+                }
+            }
+            
+            if (messageElement) {
+                messageElement.textContent = errorMessage;
+                messageElement.style.color = "#ef4444"; // Error red
+            } else if (isFooterForm) {
+                showFooterMessage(errorMessage, 'error');
+            }
+            return false;
+        }
+    };
+    
+    // Modal form submission handler
     const handleFormSubmit = async (e: Event) => {
         e.preventDefault();
         e.stopPropagation();
         
-        console.log("Form submitted!"); // Debug log
+        console.log("Modal form submitted!"); // Debug log
         
         const emailInput = document.querySelector("#email") as HTMLInputElement | null;
         const message = document.querySelector("#response-message") as HTMLElement | null;
@@ -75,106 +169,126 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
     
-        // Basic email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            if (message) message.textContent = "Please enter a valid email address";
+        const success = await submitEmailToAPI(email, message);
+        
+        if (success) {
+            emailInput.value = "";
+            setTimeout(() => {
+                closeModal();
+            }, 2000);
+        }
+    };
+
+    // Create and manage footer message element
+    const createFooterMessage = () => {
+        let messageEl = document.querySelector("#footer-message") as HTMLElement | null;
+        
+        if (!messageEl) {
+            messageEl = document.createElement("p");
+            messageEl.id = "footer-message";
+            messageEl.className = "footer-message";
+            messageEl.style.cssText = `
+                margin-top: 1rem;
+                padding: 0.75rem 1rem;
+                border-radius: 0.5rem;
+                font-size: 0.875rem;
+                font-weight: 500;
+                text-align: center;
+                transition: all 0.3s ease;
+                opacity: 0;
+                transform: translateY(-10px);
+            `;
+            
+            // Insert after the form
+            footerForm?.parentNode?.insertBefore(messageEl, footerForm.nextSibling);
+        }
+        
+        return messageEl;
+    };
+    
+    const showFooterMessage = (message: string, type: 'success' | 'error' | 'loading') => {
+        const messageEl = createFooterMessage();
+        
+        // Set colors based on type
+        const colors = {
+            success: { bg: '#dcfce7', text: '#166534', border: '#bbf7d0' },
+            error: { bg: '#fef2f2', text: '#dc2626', border: '#fecaca' },
+            loading: { bg: '#f3f4f6', text: '#6b7280', border: '#d1d5db' }
+        };
+        
+        const color = colors[type];
+        messageEl.style.backgroundColor = color.bg;
+        messageEl.style.color = color.text;
+        messageEl.style.border = `1px solid ${color.border}`;
+        messageEl.textContent = message;
+        
+        // Animate in
+        requestAnimationFrame(() => {
+            messageEl.style.opacity = '1';
+            messageEl.style.transform = 'translateY(0)';
+        });
+        
+        // Auto-hide after delay (except for errors)
+        if (type !== 'error') {
+            setTimeout(() => {
+                messageEl.style.opacity = '0';
+                messageEl.style.transform = 'translateY(-10px)';
+            }, type === 'success' ? 4000 : 3000);
+        }
+    };
+
+    // Footer form submission handler
+    const handleFooterFormSubmit = async (e: Event) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        console.log("Footer form submitted!"); // Debug log
+        
+        if (!footerEmailInput) {
+            console.error("Footer email input not found");
             return;
         }
     
-        // Show loading state
-        if (message) {
-            message.textContent = "Subscribing...";
-            message.style.color = "#666";
+        const email = footerEmailInput.value.trim();
+        
+        if (!email) {
+            showFooterMessage("Please enter an email address", 'error');
+            return;
         }
     
-        try {
-            console.log("Making request to:", "https://pathway-ai-landing-page.onrender.com");
-            
-            const response = await fetch("https://pathway-ai-landing-page.onrender.com/api/subscribe", {
-
-                method: "POST", 
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email }),
-                // Add these for better CORS handling
-                mode: 'cors',
-                credentials: 'include'
-            });
-    
-            console.log("Response status:", response.status);
-            console.log("Response headers:", response.headers);
-    
-            const data = await response.json();
-            console.log("Response data:", data);
-    
-            if (response.ok) {
-                if (message) {
-                    message.textContent = data.message || "Successfully subscribed!";
-                    message.style.color = "#22c55e"; // Success green
-                }
-                emailInput.value = "";
-    
-                setTimeout(() => {
-                    closeModal();
-                }, 2000);
-            } else {
-                if (message) {
-                    // Handle "already subscribed" case differently
-                    if (response.status === 409 && data.alreadySubscribed) {
-                        message.textContent = data.message || "This email is already subscribed!";
-                        message.style.color = "#f59e0b"; // Warning orange
-                        
-                        // Close modal after showing message for already subscribed
-                        setTimeout(() => {
-                            closeModal();
-                        }, 2500);
-                    } else {
-                        message.textContent = data.message || "Subscription failed.";
-                        message.style.color = "#ef4444"; // Error red
-                    }
-                }
-            }
-        } catch (error) {
-            console.error("Fetch error:", error);
-            
-            let errorMessage = "Something went wrong. Please try again.";
-            
-            if (error instanceof TypeError) {
-                if (error.message.includes('Failed to fetch')) {
-                    errorMessage = "Network error. Please check your connection.";
-                } else if (error.message.includes('CORS')) {
-                    errorMessage = "Connection issue. Please try again.";
-                }
-            }
-            
-            if (message) {
-                message.textContent = errorMessage;
-                message.style.color = "#ef4444"; // Error red
-            }
+        // Show loading message
+        showFooterMessage("Adding you to our waitlist...", 'loading');
+        
+        const success = await submitEmailToAPI(email, null, true);
+        
+        if (success) {
+            footerEmailInput.value = "";
         }
     };
 
-    // Handle button click directly (backup)
+    // Handle button click directly (backup for modal)
     const handleButtonClick = (e: Event) => {
         e.preventDefault();
-        console.log("Button clicked directly!"); // Debug log
+        console.log("Modal button clicked directly!"); // Debug log
         handleFormSubmit(e);
     };
     
-    // Event listeners - Add multiple ways to handle the submission
+    // Event listeners for modal form
     form?.addEventListener("submit", handleFormSubmit);
-    
-    // Also add click listener directly to the submit button as backup
     subscribe?.addEventListener("click", handleButtonClick);
     
-    // CTA buttons to open modal
+    // Event listener for footer form
+    footerForm?.addEventListener("submit", handleFooterFormSubmit);
+    
+    // CTA buttons to open modal - but exclude the footer form button
     CTA_BTN.forEach(item => {
-        item.addEventListener("click", (e) => {
-            e.preventDefault();
-            openModal();
-        });
+        // Check if this button is NOT part of the footer form
+        if (!footerForm?.contains(item)) {
+            item.addEventListener("click", (e) => {
+                e.preventDefault();
+                openModal();
+            });
+        }
     });
     
     // Close modal when clicking overlay (but NOT the form container)
@@ -212,10 +326,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 250);
     });
 
-    // Debug: Check if elements exist
-    console.log("Form element:", form);
-    console.log("Submit button:", subscribe);
-    console.log("Modal container:", subscribeModal);
+    
+
+    const handleNavItemClick = (e: Event) => {
+        const target = e.target as HTMLElement;
+        
+        if (target.classList.contains('list_item')) {
+            const text = target.textContent?.toLowerCase();
+            let targetSection: Element | null = null;
+            
+            if (text === 'problem') {
+                targetSection = document.querySelector('.why-section--problem');
+            } else if (text === 'how it works') {
+                targetSection = document.querySelector('.works-section__header');
+            }
+            
+            if (targetSection) {
+                targetSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                
+                // Close mobile menu if open
+                if (menuList?.classList.contains('open')) {
+                    menuList.classList.remove('open');
+                    hamburgerMenu?.classList.remove('open');
+                }
+            }
+        }
+    };
+    
+    hamburgerMenu?.addEventListener("click", toggleMenu);
+    
+    menuList?.addEventListener("click", handleNavItemClick);
+
+    
     
     // Test CORS endpoint
     const testCORS = async () => {
@@ -234,4 +379,3 @@ document.addEventListener('DOMContentLoaded', () => {
     // Run CORS test after a short delay
     setTimeout(testCORS, 1000);
 });
-

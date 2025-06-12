@@ -14,24 +14,27 @@
     <div class="hero-container">
         <div class="blob-container__hero">
             <header>
-                <nav class="container">
-                    <img src="/public/assets/icons/logo.svg" alt="no image found" class="nav_logo">
-                    <!-- Menu Options -->
-                    <ul id="list" class="list">
-                        <li class="list_item">Problem</li>
-                        <li class="list_item">How it Works</li>
-                        <li class="list_item">
-                            <button class="cta_btn">Join the waitlist</button>
-                        </li>
-                       
-                    </ul>
-                    <!-- Mobile Menu -->
-                    <div id="hamburger" class="hamburger">
-                        <div class="hamburger__line"></div>
-                        <div class="hamburger__line"></div>
-                        <div class="hamburger__line"></div>
-                    </div>
-                </nav>
+                <div class="navbar-container">
+                    <nav class="container">
+                        <img src="/public/assets/icons/logo.svg" alt="no image found" class="nav_logo">
+                        <!-- Menu Options -->
+                        <ul id="list" class="list">
+                            <li class="list_item">Problem</li>
+                            <li class="list_item">How it Works</li>
+                            <li class="list_item">
+                                <button class="cta_btn">Join the waitlist</button>
+                            </li>
+                           
+                        </ul>
+                        <!-- Mobile Menu -->
+                        <div id="hamburger" class="hamburger">
+                            <div class="hamburger__line"></div>
+                            <div class="hamburger__line"></div>
+                            <div class="hamburger__line"></div>
+                        </div>
+                    </nav>
+                </div>
+              
             </header>
             <!-- Hero Content-->
             <section class="hero container">
@@ -60,8 +63,8 @@
             <p class="why-section__text">You’re spending hours each week identifying and tracking learning needs across 30+ students—leaving you drained and still feeling like you’re falling short.</p>
         </section>
         <section class="why-section why-section--solution">
-            <div class="why-section__header__container">
-                <h2 class="why-section__header">That’s where Pathway AI comes in.</h2>
+            <div class="why-section__header__container"> 
+                <h2 class="why-section__header">That’s where <span class="gradient_highlight">Pathway AI</span> comes in.</h2>
                 <p class="why-section__sub__header">Automated diagnostics. Real-world learning. Clear insights</p>
             </div>
             <p class="why-section__text">Our platform identifies foundational gaps, adapts learning pathways, and helps students connect learning to real life.</p>
@@ -72,18 +75,18 @@
             <h2 class="works-section__header">How it works</h2>
             <div class="workflow-section">
             <section class="work-card__container">
-                <div class="card">
-                    <h3 class="card-title">1 Diagnose</h3>
-                    <p class="card-text">Uncover conceptual gaps in  with precise assessments based on current classroom topics leveraging AI.</p>
-                </div>
-                <div class="card">
-                    <h3 class="card-title">2 Scaffold</h3>
-                    <p class="card-text">AI automatically delivers targeted, real-world-aligned learning experiences tailored to individual student needs with current lessons</p>
-                </div>
-                <div class="card">
-                    <h3 class="card-title">3 Track</h3>
-                    <p class="card-text">Empower teachers with clear, actionable insights and data to monitor student progress effectively.</p>
-                </div>
+                <div class="card" data-step="1">
+                    <h3 class="card-title">Diagnose</h3>
+                    <p class="card-text">Uncover conceptual gaps with precise assessments based on current classroom topics using AI.</p>
+                  </div>
+                  <div class="card" data-step="2">
+                    <h3 class="card-title">Scaffold</h3>
+                    <p class="card-text">AI delivers targeted, real-world-aligned learning experiences tailored to each student.</p>
+                  </div>
+                  <div class="card" data-step="3">
+                    <h3 class="card-title">Track</h3>
+                    <p class="card-text">Empower teachers with clear, actionable insights and data to track student progress.</p>
+                  </div>
             </section>
         </div>
             <section class="founder">
@@ -96,7 +99,10 @@
         <section class="footer_section">
             <h2 class="footer_header">Help us <span class="footer_highlight">rethink education</span></h2>
             <p class="footer_text">Be the first to pilot Pathway and transform your practice</p>
-            <button class="cta_btn"> Join the waitlist </button>
+            <form id="email-waitlist-form" class="inline-email-form">
+                <input type="email" placeholder="Your email" class="inline-email-input" required>
+                <button type="submit" class="cta_btn">Get Early Access</button>
+              </form>
         </section>
         
     </div>
