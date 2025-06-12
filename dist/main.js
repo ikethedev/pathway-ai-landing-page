@@ -72,34 +72,69 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         // Show loading state
-        if (message)
+        if (message) {
             message.textContent = "Subscribing...";
+            message.style.color = "#666";
+        }
         try {
-            const response = await fetch("/api/subscribe", {
+            console.log("Making request to:", "https://pathway-ai-landing-page.onrender.com");
+            const response = await fetch("https://pathway-ai-landing-page.onrender.com/api/subscribe", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ email }),
+                // Add these for better CORS handling
+                mode: 'cors',
+                credentials: 'include'
             });
+            console.log("Response status:", response.status);
+            console.log("Response headers:", response.headers);
             const data = await response.json();
+            console.log("Response data:", data);
             if (response.ok) {
-                if (message)
+                if (message) {
                     message.textContent = data.message || "Successfully subscribed!";
+                    message.style.color = "#22c55e"; // Success green
+                }
                 emailInput.value = "";
                 setTimeout(() => {
                     closeModal();
                 }, 2000);
             }
             else {
-                if (message)
-                    message.textContent = data.message || "Subscription failed.";
+                if (message) {
+                    // Handle "already subscribed" case differently
+                    if (response.status === 409 && data.alreadySubscribed) {
+                        message.textContent = data.message || "This email is already subscribed!";
+                        message.style.color = "#f59e0b"; // Warning orange
+                        // Close modal after showing message for already subscribed
+                        setTimeout(() => {
+                            closeModal();
+                        }, 2500);
+                    }
+                    else {
+                        message.textContent = data.message || "Subscription failed.";
+                        message.style.color = "#ef4444"; // Error red
+                    }
+                }
             }
         }
         catch (error) {
             console.error("Fetch error:", error);
-            if (message)
-                message.textContent = "Something went wrong. Please try again.";
+            let errorMessage = "Something went wrong. Please try again.";
+            if (error instanceof TypeError) {
+                if (error.message.includes('Failed to fetch')) {
+                    errorMessage = "Network error. Please check your connection.";
+                }
+                else if (error.message.includes('CORS')) {
+                    errorMessage = "Connection issue. Please try again.";
+                }
+            }
+            if (message) {
+                message.textContent = errorMessage;
+                message.style.color = "#ef4444"; // Error red
+            }
         }
     };
     // Handle button click directly (backup)
@@ -150,4 +185,20 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log("Form element:", form);
     console.log("Submit button:", subscribe);
     console.log("Modal container:", subscribeModal);
+    // Test CORS endpoint
+    const testCORS = async () => {
+        try {
+            const response = await fetch("https://pathway-ai-landing-page.onrender.com/api/test", {
+                method: "GET",
+                mode: 'cors'
+            });
+            const data = await response.json();
+            console.log("CORS test successful:", data);
+        }
+        catch (error) {
+            console.error("CORS test failed:", error);
+        }
+    };
+    // Run CORS test after a short delay
+    setTimeout(testCORS, 1000);
 });

@@ -5,13 +5,14 @@
     "main": "dist/main.js",
     "scripts": {
         "build": "tsc",
-        "watch": "tsc --watch",
-        "dev": "tsc && node dist/server.js",
         "start": "node dist/server.js",
+        "dev": "ts-node server.ts",
+        "watch": "tsc --watch",
         "build:prod": "tsc && npm run minify",
         "minify": "terser dist/main.js -o dist/main.min.js"
     },
     "devDependencies": {
+        "@types/cors": "^2.8.19",
         "@types/express": "^5.0.3",
         "@types/node": "^20.19.0",
         "live-server": "^1.2.0",
@@ -32,6 +33,7 @@
         "@mailchimp/mailchimp_marketing": "^3.0.80",
         "axios": "^1.9.0",
         "concurrently": "^9.1.2",
+        "cors": "^2.8.5",
         "dotenv": "^16.5.0",
         "express": "^4.21.2"
     },

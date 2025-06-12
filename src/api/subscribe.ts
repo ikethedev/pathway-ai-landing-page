@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import axios from 'axios';
 
 const router = express.Router();
@@ -6,21 +6,51 @@ const router = express.Router();
 // Email validation regex
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-router.post('/', async (req: any, res: any) => {
-    console.log('📥 POST /api/subscribe hit!');
+// Handle OPTIONS requests for CORS preflight
+router.options('/subscribe', (req: Request, res: Response): void => {
+    const origin = req.headers.origin;
+    console.log('🔧 OPTIONS request from origin:', origin);
+    
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.sendStatus(200);
+});
+
+// Subscribe route - mounted at '/api', so this becomes '/api/subscribe'
+router.post('/subscribe', async (req: Request, res: Response): Promise<void> => {
+    console.log('📥 POST /api/subscribe hit via router!');
     console.log('📋 Request body:', req.body);
+    console.log('🌐 Origin:', req.headers.origin);
+    
+    // Set CORS headers for the response
+    const origin = req.headers.origin;
+    if (origin) {
+        res.header('Access-Control-Allow-Origin', origin);
+        console.log('✅ Setting CORS origin header:', origin);
+    }
+    res.header('Access-Control-Allow-Credentials', 'true');
     
     const { email } = req.body;
     
     // Validate email
     if (!email) {
         console.log('❌ No email provided');
-        return res.status(400).json({ message: 'Email is required' });
+        res.status(400).json({ 
+            message: 'Email is required',
+            success: false 
+        });
+        return;
     }
     
     if (!emailRegex.test(email)) {
         console.log('❌ Invalid email format:', email);
-        return res.status(400).json({ message: 'Please enter a valid email address' });
+        res.status(400).json({ 
+            message: 'Please enter a valid email address',
+            success: false 
+        });
+        return;
     }
     
     const API_KEY = process.env.MAILCHIMP_API_KEY;
@@ -34,7 +64,11 @@ router.post('/', async (req: any, res: any) => {
     
     if (!API_KEY || !LIST_ID) {
         console.error('❌ Missing environment variables');
-        return res.status(500).json({ message: 'Server configuration error' });
+        res.status(500).json({ 
+            message: 'Server configuration error',
+            success: false 
+        });
+        return;
     }
     
     // Extract datacenter from API key
@@ -42,7 +76,11 @@ router.post('/', async (req: any, res: any) => {
     
     if (!DATACENTER) {
         console.error('❌ Invalid API key format - no datacenter found');
-        return res.status(500).json({ message: 'Server configuration error' });
+        res.status(500).json({ 
+            message: 'Server configuration error',
+            success: false 
+        });
+        return;
     }
     
     console.log('🌐 Using datacenter:', DATACENTER);
@@ -59,6 +97,7 @@ router.post('/', async (req: any, res: any) => {
                 Authorization: `apikey ${API_KEY}`,
                 'Content-Type': 'application/json',
             },
+            timeout: 10000 // 10 second timeout
         });
         
         console.log('✅ Mailchimp response status:', response.status);
@@ -80,15 +119,31 @@ router.post('/', async (req: any, res: any) => {
         // Handle specific Mailchimp errors
         if (error.response?.status === 400) {
             const errorDetail = error.response.data?.detail || '';
-            if (errorDetail.includes('already a list member')) {
-                return res.status(400).json({ 
-                    message: 'This email is already subscribed to our newsletter!' 
+            const errorTitle = error.response.data?.title || '';
+            
+            if (errorDetail.includes('already a list member') || errorTitle.includes('Member Exists')) {
+                res.status(409).json({ 
+                    message: 'This email is already subscribed to our newsletter!',
+                    success: false,
+                    alreadySubscribed: true
                 });
+                return;
             } else if (errorDetail.includes('invalid')) {
-                return res.status(400).json({ 
-                    message: 'Please enter a valid email address' 
+                res.status(400).json({ 
+                    message: 'Please enter a valid email address',
+                    success: false 
                 });
+                return;
             }
+        }
+        
+        // Handle timeout errors
+        if (error.code === 'ECONNABORTED') {
+            res.status(408).json({ 
+                message: 'Request timeout. Please try again.',
+                success: false 
+            });
+            return;
         }
         
         const errorMessage = error.response?.data?.detail || 'Unable to subscribe. Please try again.';
@@ -99,4 +154,11 @@ router.post('/', async (req: any, res: any) => {
     }
 });
 
+// Add a test route to verify router is working
+router.get('/test-router', (req: Request, res: Response): void => {
+    console.log('🧪 Router test endpoint hit');
+    res.json({ message: 'Router is working!', timestamp: new Date().toISOString() });
+});
+
+// Use only ES6 export syntax
 export default router;
