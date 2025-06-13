@@ -158,9 +158,11 @@ body {
   margin-left: 2rem;
 }
 
+
 .list_item:not(:last-child):hover {
   opacity: 0.5;
   cursor: pointer;
+  width: fit-content;
   border-bottom: .05rem solid var(--primary-accent);
   padding-bottom: .25rem;
 }
@@ -169,6 +171,13 @@ body {
   .list_item {
     margin-left: 0%;
   }
+
+.list_item:not(:last-child):hover {
+  opacity: 0.5;
+  cursor: pointer;
+  border-bottom: .05rem solid var(--primary-accent);
+  padding-bottom: .25rem;
+}
 }
 
 .list_item.cta_btn {

@@ -4,11 +4,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 // Load environment variables first
-require('dotenv').config();
+require("dotenv/config");
 const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
 const cors_1 = __importDefault(require("cors"));
 const axios_1 = __importDefault(require("axios"));
+const fs_1 = __importDefault(require("fs"));
 const app = (0, express_1.default)();
 const PORT = parseInt(process.env.PORT || '3000', 10);
 // Email validation regex
@@ -16,6 +17,8 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Define allowed origins
 const allowedOrigins = [
     'https://pathway-ai-landing-page.onrender.com',
+    'https://pathwaylearning.app',
+    'https://www.pathwaylearning.app',
     'https://courageous-daifuku-4bc234.netlify.app',
     'http://localhost:3000',
     'http://localhost:5173',
@@ -23,7 +26,7 @@ const allowedOrigins = [
     'http://127.0.0.1:5500',
     'http://127.0.0.1:3000'
 ];
-// FIXED: Enhanced CORS configuration with proper origin checking
+// Enhanced CORS configuration with proper origin checking
 const corsOptions = {
     origin: (origin, callback) => {
         console.log('🌐 Request origin:', origin);
@@ -65,6 +68,21 @@ const corsOptions = {
 };
 // Apply CORS middleware BEFORE other middleware
 app.use((0, cors_1.default)(corsOptions));
+// Add explicit OPTIONS handler for all routes
+app.options('*', (0, cors_1.default)(corsOptions));
+// Add manual CORS headers as backup
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    if (!origin || allowedOrigins.includes(origin) ||
+        origin.includes('localhost') || origin.includes('127.0.0.1') ||
+        origin.includes('netlify.app') || origin.includes('onrender.com') || origin.includes('vercel.app')) {
+        res.header('Access-Control-Allow-Origin', origin || '*');
+        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+        res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+        res.header('Access-Control-Allow-Credentials', 'true');
+    }
+    next();
+});
 // Middleware
 app.use(express_1.default.json({ limit: '10mb' }));
 app.use(express_1.default.urlencoded({ extended: true, limit: '10mb' }));
@@ -73,7 +91,6 @@ app.use((req, res, next) => {
     console.log(`🔍 ${req.method} ${req.path} - Origin: ${req.headers.origin}`);
     next();
 });
-// DIRECT ROUTES - No router mounting issues
 // Test endpoint
 app.get('/api/test', (req, res) => {
     console.log('🧪 Test endpoint hit from origin:', req.headers.origin);
@@ -105,7 +122,7 @@ app.get('/api/mailchimp-check', (req, res) => {
         datacenter: apiKey ? apiKey.split('-')[1] : 'missing'
     });
 });
-// FIXED: Subscribe endpoint - Simplified and working implementation
+// Subscribe endpoint - Simplified and working implementation
 app.post('/api/subscribe', async (req, res) => {
     console.log('📥 POST /api/subscribe hit!');
     console.log('📋 Request body:', req.body);
@@ -181,7 +198,6 @@ app.post('/api/subscribe', async (req, res) => {
             data: error.response?.data,
             message: error.message
         });
-        // Handle specific Mailchimp errors
         if (error.response?.status === 400) {
             const errorDetail = error.response.data?.detail || '';
             const errorTitle = error.response.data?.title || '';
@@ -201,7 +217,6 @@ app.post('/api/subscribe', async (req, res) => {
                 return;
             }
         }
-        // Handle timeout errors
         if (error.code === 'ECONNABORTED') {
             res.status(408).json({
                 message: 'Request timeout. Please try again.',
@@ -237,6 +252,22 @@ app.use('/dist', express_1.default.static(path_1.default.join(__dirname, 'dist')
 // Fix the index.html path too
 app.get('/', (req, res) => {
     res.sendFile(path_1.default.join(__dirname, 'index.html'));
+});
+// Debug files endpoint
+app.get('/debug-files', (req, res) => {
+    try {
+        res.json({
+            currentDir: __dirname,
+            filesInCurrentDir: fs_1.default.readdirSync(__dirname),
+            hasStyles: fs_1.default.existsSync(path_1.default.join(__dirname, 'styles')),
+            hasAssets: fs_1.default.existsSync(path_1.default.join(__dirname, 'assets')),
+            hasDist: fs_1.default.existsSync(path_1.default.join(__dirname, 'dist')),
+            hasIndexHtml: fs_1.default.existsSync(path_1.default.join(__dirname, 'index.html'))
+        });
+    }
+    catch (error) {
+        res.json({ error: error.message });
+    }
 });
 // Catch-all route
 app.get('*', (req, res) => {
@@ -295,21 +326,5 @@ process.on('unhandledRejection', (err) => {
 process.on('uncaughtException', (err) => {
     console.error('Uncaught Exception:', err);
     process.exit(1);
-});
-app.get('/debug-files', (req, res) => {
-    const fs = require('fs');
-    try {
-        res.json({
-            currentDir: __dirname,
-            filesInCurrentDir: fs.readdirSync(__dirname),
-            hasStyles: fs.existsSync(path_1.default.join(__dirname, 'styles')),
-            hasAssets: fs.existsSync(path_1.default.join(__dirname, 'assets')),
-            hasDist: fs.existsSync(path_1.default.join(__dirname, 'dist')),
-            hasIndexHtml: fs.existsSync(path_1.default.join(__dirname, 'index.html'))
-        });
-    }
-    catch (error) {
-        res.json({ error: "you" });
-    }
 });
 exports.default = app;

@@ -33,6 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     // Function to open modal
     const openModal = () => {
+        if (menuList?.classList.contains('open')) {
+            menuList?.classList.remove('open');
+            hamburgerMenu?.classList.remove('open');
+        }
         subscribeModal?.classList.remove("hidden");
         document.body.classList.add("modal-open");
     };
@@ -71,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
             showFooterMessage("Adding you to our waitlist...", 'loading');
         }
         try {
-            console.log("Making request to:", "https://pathway-ai-landing-page.onrender.com");
             const response = await fetch("https://pathway-ai-landing-page.onrender.com/api/subscribe", {
                 method: "POST",
                 headers: {
@@ -81,9 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 mode: 'cors',
                 credentials: 'include'
             });
-            console.log("Response status:", response.status);
             const data = await response.json();
-            console.log("Response data:", data);
             if (response.ok) {
                 if (messageElement) {
                     messageElement.textContent = data.message || "Successfully subscribed!";
@@ -119,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         catch (error) {
-            console.error("Fetch error:", error);
             let errorMessage = "Something went wrong. Please try again.";
             if (error instanceof TypeError) {
                 if (error.message.includes('Failed to fetch')) {
@@ -239,7 +239,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle button click directly (backup for modal)
     const handleButtonClick = (e) => {
         e.preventDefault();
-        console.log("Modal button clicked directly!"); // Debug log
         handleFormSubmit(e);
     };
     // Event listeners for modal form
@@ -270,9 +269,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     hamburgerMenu?.addEventListener("click", toggleMenu);
-    menuList?.addEventListener("click", () => {
-        console.log("Menu clicked");
-    });
     document?.addEventListener("click", closeMenuOnOutSideClick);
     window?.addEventListener("resize", () => {
         disableTransitions();
